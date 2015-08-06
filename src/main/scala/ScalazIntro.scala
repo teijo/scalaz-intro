@@ -3,6 +3,12 @@ import scalaz.std.anyVal._
 import scalaz.std.list._
 
 object ScalazIntro {
+  def testMonad() {
+    val m = Monad[List]
+    assert(List(2) == m.map(List(1))(_ + 1))
+    assert(List("1", "2") == m.bind(List(1, 2))({ i: Int => List(i.toString) }))
+  }
+
   def testApplicative() {
     val a = Applicative[List]
     assert(List(1) == a.point(1))
@@ -27,6 +33,7 @@ object ScalazIntro {
   }
 
   def main(args: Array[String]) {
+    testMonad()
     testApplicative()
     testFunctor()
     testMonoid()
