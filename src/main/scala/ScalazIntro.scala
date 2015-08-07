@@ -5,10 +5,15 @@ import scalaz.std.list._
 object ScalazIntro {
   def testProcess() {
     import scalaz.stream._
+    import scalaz.concurrent.Task
+
     val process = Process.range(1, 10)
     assert(Vector(1, 2, 3, 4, 5, 6, 7, 8, 9) == process.toSource.runLog.run)
     // Can be re-run
     assert(Vector(1, 2, 3, 4, 5, 6, 7, 8, 9) == process.toSource.runLog.run)
+
+    val p1: Process[Task, Int] = Process.emit(0)
+    assert(Vector(0) == p1.runLog.run)
   }
 
   def testMonad() {
