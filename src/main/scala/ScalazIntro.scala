@@ -14,6 +14,10 @@ object ScalazIntro {
 
     val p1: Process[Task, Int] = Process.emit(0)
     assert(Vector(0) == p1.runLog.run)
+
+    // Append processes
+    val processChain = Process.emit(1) ++ Process.emit(2)
+    assert(Vector(1, 2) == processChain.toSource.runLog.run)
   }
 
   def testMonad() {
