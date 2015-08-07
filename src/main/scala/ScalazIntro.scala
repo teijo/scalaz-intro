@@ -3,6 +3,17 @@ import scalaz.std.anyVal._
 import scalaz.std.list._
 
 object ScalazIntro {
+  def testSink() {
+    import scalaz.concurrent.Task
+    import scalaz.stream.{sink, _}
+
+    var mutable = 0
+    val sideEffect = sink.lift[Task, Int]((data: Int) => Task.now { mutable = data })
+
+    Process.emit(1).to(sideEffect).run
+    assert(1 == mutable)
+  }
+
   def testProcess() {
     import scalaz.stream._
     import scalaz.concurrent.Task
@@ -50,6 +61,7 @@ object ScalazIntro {
   }
 
   def main(args: Array[String]) {
+    testSink()
     testProcess()
     testMonad()
     testApplicative()
