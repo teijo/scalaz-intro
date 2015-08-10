@@ -52,6 +52,15 @@ object ScalazIntro {
     // Append processes
     val processChain = Process.emit(1) ++ Process.emit(2)
     assert(Vector(1, 2) == processChain.toSource.runLog.run)
+
+    // Transformations
+    val p = Process(5, 4, 3, 2, 1)
+    val results = p.collect({
+      case 1 => "one"
+      case 2 => "two"
+      case 3 => "three"
+    }).filter(_.length > 3).map(_.toUpperCase)
+    assert(Vector("THREE") == results.toSource.runLog.run)
   }
 
   def testMonad() {

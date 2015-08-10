@@ -3,7 +3,8 @@
 Personal - induction to / tinkering with -
 [Scalaz](https://github.com/scalaz/scalaz) based on [My scalaz-stream User
 Notes](https://www.gitbook.com/book/aappddeevv/test_private_book/details) at
-[Gitbook.com](https://www.gitbook.com/).
+[Gitbook.com](https://www.gitbook.com/) and [Introduction to
+scalaz-stream](https://gist.github.com/djspiewak/d93a9c4983f63721c41c).
 
 ## Run
 
