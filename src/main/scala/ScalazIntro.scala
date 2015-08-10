@@ -3,6 +3,29 @@ import scalaz.std.anyVal._
 import scalaz.std.list._
 
 object ScalazIntro {
+  def testWriter() {
+    import scalaz.stream._
+    import scala.collection.mutable
+    import scalaz.concurrent.Task
+
+    var drainValues = mutable.MutableList[Int]()
+    val sideEffect = sink.lift[Task, Int]((data: Int) => Task.now { drainValues += data })
+
+    val output = Process.range(1, 3)
+      // Split input into two streams, left writer, right output
+      .flatMap(i => Process.emit(-\/(i)) ++ Process.emit(\/-(i)))
+      // Map left side stream
+      .mapW(_ + 11)
+      // Sink for left side
+      .drainW(sideEffect)
+      // Map right side
+      .map(_ + 1)
+      .runLog.run
+
+    assert(List(2, 3) == output)
+    assert(List(12, 13) == drainValues.toList)
+  }
+
   def testSink() {
     import scalaz.concurrent.Task
     import scalaz.stream.{sink, _}
@@ -61,6 +84,7 @@ object ScalazIntro {
   }
 
   def main(args: Array[String]) {
+    testWriter()
     testSink()
     testProcess()
     testMonad()
