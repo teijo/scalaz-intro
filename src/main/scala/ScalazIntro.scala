@@ -3,6 +3,26 @@ import scalaz.std.anyVal._
 import scalaz.std.list._
 
 object ScalazIntro {
+  def testComposition() {
+    import scalaz.stream._
+
+    val names = Process("one", "two", "three")
+    val nums = Process(1, 2, 3)
+
+    val result: Process[Nothing, (String, Int)] = names zip nums
+    assert(Vector(("one", 1), ("two", 2), ("three", 3)) == result.toSource.runLog.run)
+  }
+
+  def testAppendingProcesses() {
+    import scalaz.stream._
+
+    val names = Process("one", "two", "three")
+    def nums(n: Int): Process[Nothing, Int] = Process(n) ++ nums(n + 1) // Append processes
+
+    val result = names zip nums(1)
+    assert(Vector(("one", 1), ("two", 2), ("three", 3)) == result.toSource.runLog.run)
+  }
+
   def testWriter() {
     import scalaz.stream._
     import scala.collection.mutable
@@ -93,6 +113,8 @@ object ScalazIntro {
   }
 
   def main(args: Array[String]) {
+    testAppendingProcesses()
+    testComposition()
     testWriter()
     testSink()
     testProcess()
