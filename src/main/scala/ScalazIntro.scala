@@ -3,6 +3,21 @@ import scalaz.std.anyVal._
 import scalaz.std.list._
 
 object ScalazIntro {
+  def testHandleWith() {
+    import scalaz.concurrent.Task
+
+    // Catch matched exceptions
+    val task: Task[Int] = Task {
+      throw new RuntimeException("problem")
+      0
+    }.handleWith {
+      case t: RuntimeException => Task { -1 }
+      case t: NoSuchElementException => Task { 1 }
+    }
+
+    assert(-1 == task.run)
+  }
+
   def testAsync() {
     import scalaz.concurrent.Task
     import scalaz.Disjunction.right
@@ -131,6 +146,7 @@ object ScalazIntro {
   }
 
   def main(args: Array[String]) {
+    testHandleWith()
     testAsync()
     testAppendingProcesses()
     testComposition()
