@@ -3,6 +3,20 @@ import scalaz.std.anyVal._
 import scalaz.std.list._
 
 object ScalazIntro {
+  def testObserve() {
+    import scalaz.stream._
+    import scalaz.concurrent.Task
+
+    var mutable = 0
+    val sideEffect = sink.lift[Task, Int](data => Task { mutable += data })
+
+    // observe() to pass-through data [to map()] while forking it for side-effect such as logging or debugging
+    val task = Process(1, 2, 3).observe(sideEffect).map(_ - 1)
+
+    assert(Vector(0, 1, 2) == task.runLog.run)
+    assert(6 == mutable)
+  }
+
   def testHandleWith() {
     import scalaz.concurrent.Task
 
@@ -146,6 +160,7 @@ object ScalazIntro {
   }
 
   def main(args: Array[String]) {
+    testObserve()
     testHandleWith()
     testAsync()
     testAppendingProcesses()
