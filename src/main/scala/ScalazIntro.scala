@@ -3,6 +3,24 @@ import scalaz.std.anyVal._
 import scalaz.std.list._
 
 object ScalazIntro {
+  def testAsync() {
+    import scalaz.concurrent.Task
+    import scalaz.Disjunction.right
+
+    val test = Task.async { (done: Disjunction[Throwable, Int] => Unit) =>
+      Thread.sleep(100)
+      done(right(1))
+    }
+
+    assert(1 == test.attemptRun.getOrElse(-1))
+
+    val failTest = Task.async { (done: Disjunction[Throwable, Int] => Unit) =>
+      throw new Exception("problem")
+    }
+
+    assert(-1 == failTest.attemptRun.getOrElse(-1))
+  }
+
   def testComposition() {
     import scalaz.stream._
 
@@ -113,6 +131,7 @@ object ScalazIntro {
   }
 
   def main(args: Array[String]) {
+    testAsync()
     testAppendingProcesses()
     testComposition()
     testWriter()
